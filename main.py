@@ -1,229 +1,199 @@
+import tkinter as tk
 from tkinter import *
 from PIL import Image, ImageTk
+from constants import *
 import random
 
-root = Tk()
+
+root = tk.Tk()
+root.geometry("350x470")
 root.title("Movies and Shows")
-root.geometry("350x350")
-
-menu = Menu(root)
-root.config(menu=menu)
-
-image_background = Image.open("pictures/Background.jpg")
-w, h = image_background.size
-while w > 350 or h > 350:
-    image_background = image_background.resize((int(w/1.01), int(h/1.01)))
-photo = ImageTk.PhotoImage(image_background)
-label_background = Label(root, image=photo)
-label_background.pack(fill=BOTH, expand=1)
+root.resizable(False, False)
 
 
 
-def animation():
-    global frame_anim
-    if "frame_anim" in globals():
-        frame_anim.pack_forget()
+dict_menu = {"Animation": dict_anim, 
+            "Movies": dict_movies,
+            "TV Shows": dict_tv,
+            "Actors and Directors": dict_act_dir
+            }
+
+
+class Category():
+    def __init__(self, name, dict):
+        self.name = name
+        self.dict = dict
+        self.rb1 = None
+        self.rb2 = None
+        self.rb3 = None
+        self.img_list = [] 
+        self.list_result = []
+        self.list_control = []
     
-    
-    frame_anim = Frame(root)
-    frame_anim.pack(fill=BOTH, expand=1)
-    
-    frame_anim.grid_rowconfigure(0, weight=1)
-    frame_anim.grid_rowconfigure(1, weight=2)
-    frame_anim.grid_rowconfigure(2, weight=1)
-    frame_anim.grid_rowconfigure(3, weight=1)
-    frame_anim.grid_rowconfigure(4, weight=1)
-    frame_anim.grid_columnconfigure(0, weight=1)
-    frame_anim.grid_columnconfigure(1, weight=1)
+    def frames(self):
+        for widgets in root.winfo_children():
+            widgets.pack_forget()
+        
+        
+        if "self.frame" in globals():
+            self.frame.pack_forget()
 
-    label_cat = Label(frame_anim, text="Animation")
-    label_cat.grid(row=0, column=0, padx=5, pady=5, sticky="nsew", columnspan=2)
+        
+        self.frame = Frame(root)
+        self.frame.pack(fill=BOTH, expand=1)
+    
+        self.frame.grid_rowconfigure(0, weight=1)
+        self.frame.grid_rowconfigure(1, weight=2)
+        self.frame.grid_rowconfigure(2, weight=1)
+        self.frame.grid_rowconfigure(3, weight=1)
+        self.frame.grid_rowconfigure(4, weight=1)
+        self.frame.grid_columnconfigure(0, weight=1)
+        self.frame.grid_columnconfigure(1, weight=1)
+
+        label_cat = Label(self.frame, text=self.name)
+        label_cat.grid(row=0, column=0, padx=5, pady=5, sticky="nsew", columnspan=2)
+    
+        btn_confirm = Button(self.frame, text="Confirm", command=self.confirm)
+        btn_confirm.grid(row=4, column=1, padx=30, pady=1, sticky="ne")
+
+
+    def create_rb_text(self):
+        
+        if self.rb1 is not None:
+            self.rb1.destroy()
+            self.rb2.destroy()
+            self.rb3.destroy()
+        
+        self.key_list = list(self.dict.keys())
+        self.value_list = list(self.dict.values())
+        self.rb_text = []
+        print("-------------------------------------------")
+        print(self.rb_text)
+        for value in self.value_list:
+            if value == self.img:
+                self.rb_text.append(self.key_list[self.value_list.index(value)])
+                
+                print(self.rb_text)
+        i = 0
+        while i < 2:
+            while True:
+                random_key = random.choice(self.key_list)
+                if random_key not in self.rb_text:
+                    self.rb_text.append(random_key)
+                    break
+            i += 1
+        
+        random.shuffle(self.rb_text)
+        print(self.rb_text)
+        
+        self.selected_movie = StringVar()
+        self.selected_movie.set(0)
+        
+        self.rb1 = Radiobutton(self.frame, text=(self.rb_text[0]), value=(self.rb_text[0]), variable=self.selected_movie)
+        self.rb1.grid(row=2, column=0, padx=60, pady=1, columnspan=2, sticky="w")
+        self.rb2 = Radiobutton(self.frame, text=(self.rb_text[1]), value=(self.rb_text[1]), variable=self.selected_movie)
+        self.rb2.grid(row=3, column=0, padx=60, pady=1, columnspan=2, sticky="w")
+        self.rb3 = Radiobutton(self.frame, text=(self.rb_text[2]), value=(self.rb_text[2]), variable=self.selected_movie)
+        self.rb3.grid(row=4, column=0, padx=60, pady=1, columnspan=2, sticky="w")
+
 
     
+    def show_image(self):
+    
+        self.img = random.choice(list(self.dict.values()))
+        while self.img in self.img_list:
+            self.img = random.choice(list(self.dict.values()))
+        self.img_list.append(self.img)
+        width, height = self.img.size
+        while width > 700 or height > 400:
+            width /= 1.01
+            height /= 1.01
+        img_resized = self.img.resize((int(width/2), int(height/2)))
+        photo = ImageTk.PhotoImage(img_resized)
+        label_img = Label(self.frame, image=photo)
+        label_img.image = photo
+        label_img.grid(row=1, column=0, columnspan=2, pady=5, sticky="nsew")
+        self.create_rb_text()
 
-    #Declarations
-    
-    list_result = []    
-    list_control = []
-    global img_list
-    img_list = [] 
-
-    img0 = Image.open("pictures/animation/Brave.jpg")
-    img1 = Image.open("pictures/animation/Charm.jpg")
-    img2 = Image.open("pictures/animation/Coco.jpg")
-    img3 = Image.open("pictures/animation/Inside Out.jpg")
-    img4 = Image.open("pictures/animation/Luca.jpg")
-    img5 = Image.open("pictures/animation/Soul.jpg")
-    img6 = Image.open("pictures/animation/The Brave Little Toaster.jpg")
-    img7 = Image.open("pictures/animation/Treasure Planet.jpg")
-    img8 = Image.open("pictures/animation/United.jpg")
-    img9 = Image.open("pictures/animation/Zootopia.jpg")
-    
-    global img_dict
-    img_dict = {"Brave": img0,
-                "Charm": img1, 
-                "Coco": img2, 
-                "Inside Out": img3, 
-                "Luca": img4, 
-                "Soul": img5, 
-                "The Brave Little Toaster": img6, 
-                "Treasure Planet": img7, 
-                "United": img8, 
-                "Zootopia": img9
-                }
-    
-    
-
-    def green_red():
-        frame_right_wrong = Frame(frame_anim)
+    def green_red(self):
+        frame_right_wrong = Frame(self.frame)
         frame_right_wrong.grid(row=2, column=1, padx=30, pady=1, sticky="e", rowspan=2)
-        global list_right_wrong_frames
-        list_right_wrong_frames = []
         right_wrong_bg = "white"
-    
-        for frame in range(len(img_dict)):
+        self.list_right_wrong_frames = []
+
+        for frame in range(len(self.dict)):
             row = 0 if frame < 5 else 1
             column = frame if frame < 5 else frame - 5
             frame = Frame(frame_right_wrong, bg=right_wrong_bg, borderwidth=1, relief="solid")
             frame.grid(row=row, column=column, padx=1, pady=1, sticky="nsew")
             frame.config(width=10, height=10)
-            list_right_wrong_frames.append(frame)
-    green_red()
-
-    def lose_win(text):
-        frame_lose_win = Frame(frame_anim, bg="white")
-        frame_lose_win.pack(fill=BOTH, expand=1)
-        label_result = Label(frame_lose_win, text=text)
-        label_result.pack(pady=5, anchor="center")
-        label_percent = Label(frame_lose_win, text=f"{percentage}%", bg="green" if percentage >= 50 else "red")
-        label_percent.pack(pady=5, anchor="center") 
-
-    def create_rb_text():
-        global rb1, rb2, rb3
-        if "rb1" in globals():
-            rb1.grid_forget()
-            rb2.grid_forget()
-            rb3.grid_forget()
-        global rb_text
-        global key_list
-        global value_list
-        rb_text = []
-        key_list = list(img_dict.keys())
-        value_list = list(img_dict.values())
-        for value in value_list:
-            if value == img:
-                rb_text.append(key_list[value_list.index(value)])
-
-        i = 0
-        while i < 2:
-            while True:
-                random_key = random.choice(key_list)
-                if random_key not in rb_text:
-                    rb_text.append(random_key)
-                    break
-            i += 1
-        
-        random.shuffle(rb_text)
-
-        global selected_movie
-        selected_movie = StringVar()
-        selected_movie.set(0)
-        
-        
-        rb1 = Radiobutton(frame_anim, text=(rb_text[0]), value=(rb_text[0]), variable=selected_movie)
-        rb1.grid(row=2, column=0, padx=60, pady=1, columnspan=2, sticky="w")
-        rb2 = Radiobutton(frame_anim, text=(rb_text[1]), value=(rb_text[1]), variable=selected_movie)
-        rb2.grid(row=3, column=0, padx=60, pady=1, columnspan=2, sticky="w")
-        rb3 = Radiobutton(frame_anim, text=(rb_text[2]), value=(rb_text[2]), variable=selected_movie)
-        rb3.grid(row=4, column=0, padx=60, pady=1, columnspan=2, sticky="w")
-
+            self.list_right_wrong_frames.append(frame)
     
-      
-    def confirm():
-        
-        if selected_movie.get() == "0":
+    
+    def confirm(self):
+        if self.selected_movie.get() == "0":
             return
-        
-        if len(list_control) == len(img_dict):
-            print(list_result)
 
-        if selected_movie.get() == key_list[value_list.index(img)]:
+        if self.selected_movie.get() == self.key_list[self.value_list.index(self.img)]:
             result = 1
             control = 0
-            while control in list_control:
+            while control in self.list_control:
                 control += 1
-            list_right_wrong_frames[control].config(bg="green")
-            list_control.append(control)
-            list_result.append(result)
+            self.list_right_wrong_frames[control].config(bg="green")
+            self.list_control.append(control)
+            self.list_result.append(result)
         else:
             result = 0
             control = 0
-            while control in list_control:
+            while control in self.list_control:
                 control += 1
-            list_right_wrong_frames[control].config(bg="red")
-            list_control.append(control)
-            list_result.append(result)
+            self.list_right_wrong_frames[control].config(bg="red")
+            self.list_control.append(control)
+            self.list_result.append(result)
             
-        if len(list_control) < len(img_dict):
-            show_image()
+        if len(self.list_control) < len(self.dict):
+            self.show_image()
         else:
-            global percentage
-            percentage = int(sum(list_result)*100/(len(list_result)))
-            for widgets in frame_anim.winfo_children():
+        
+            self.percentage = int(sum(self.list_result)*100/(len(self.list_result)))
+            for widgets in self.frame.winfo_children():
                 widgets.destroy()
             
-            if percentage >= 50:  
-                lose_win("CONGRATULATIONS")
+            if self.percentage >= 50:  
+                self.lose_win("CONGRATULATIONS")
             else:
-                lose_win("NEXT TIME")
-
-
-
-
-
-    def show_image():
-        global img
-        img = random.choice(list(img_dict.values()))
-        if img in img_list:
-            show_image()
-        img_list.append(img)
-        width, height = img.size
-        while width > 700 or height > 400:
-            width /= 1.01
-            height /= 1.01
-        img_resized = img.resize((int(width/2), int(height/2)))
-        photo = ImageTk.PhotoImage(img_resized)
-        label_img = Label(frame_anim, image=photo)
-        label_img.image = photo
-        label_img.grid(row=1, column=0, columnspan=2, pady=5, sticky="nsew")
-        create_rb_text()
+                self.lose_win("NEXT TIME")
 
     
-    show_image()
+    def lose_win(self, text):
+        frame_lose_win = Frame(self.frame, bg="white")
+        frame_lose_win.pack(fill=BOTH, expand=1)
+        label_result = Label(frame_lose_win, text=text)
+        label_result.pack(pady=5, anchor="center")
+        label_percent = Label(frame_lose_win, text=f"{self.percentage}%", bg="green" if self.percentage >= 50 else "red")
+        label_percent.pack(pady=5, anchor="center") 
+
+def choose_category(key, value):
+    for widgets in root.winfo_children():
+        widgets.pack_forget()
+
+    print (key)
+    category = Category(key, value)
+    category.frames()
+    category.show_image()
+    category.green_red()
+
+def menu():
     
-    
+    menu = Menu(root)
+    root.config(menu=menu)   
 
-    btn_confirm = Button(frame_anim, text="Confirm", command=confirm)
-    btn_confirm.grid(row=4, column=1, padx=30, pady=1, sticky="ne")
-    
-
-cat_menu = Menu(menu)
-menu.add_cascade(label="Categories", menu=cat_menu)
-cat_menu.add_command(label="Animation", command=animation)
-cat_menu.add_separator()
-cat_menu.add_command(label="Oscar Winners")
-cat_menu.add_separator()
-cat_menu.add_command(label="TV Shows")
-cat_menu.add_separator()
-cat_menu.add_command(label="Actors and Directors")
-cat_menu.add_separator()
-cat_menu.add_command(label="Exit", command=root.quit)
-
-
-
-
-
-
+    cat_menu = Menu(menu)
+    menu.add_cascade(label="Categories", menu=cat_menu)
+    for key, value in dict_menu.items():
+        cat_menu.add_command(label=key, command=lambda key=key, value=value: choose_category(key, value))
+        cat_menu.add_separator()
+    cat_menu.add_command(label="Exit", command=root.quit)           
+     
+menu()
 root.mainloop()
-
-
