@@ -1,6 +1,11 @@
 from tkinter import *
 from PIL import Image, ImageTk
 
+FONT_LAB_CAT = ("Arial", 22)
+FONT_BUTT = ("Arial", 15)
+HOVER_COLOR = "#B5B5B5"
+BACKGROUND_COLOR = "black"
+BUTT_COLOR = "black"
 
 # Animation
 img0 = Image.open("pictures/animation/Brave.jpg")
