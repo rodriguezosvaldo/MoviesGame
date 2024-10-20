@@ -5,6 +5,7 @@ from customtkinter import CTkImage
 from constants import *
 import random
 import customtkinter
+import os
 
 customtkinter.set_appearance_mode("dark")  
 customtkinter.set_default_color_theme("blue")  
@@ -14,6 +15,13 @@ root.geometry("350x470")
 root.title("Movies and Shows")
 root.resizable(False, False)
 root.configure(fg_color=BACKGROUND_COLOR)
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+pictures_dir = os.path.join(current_dir, "pictures")
+
+img_list = [os.path.join(pictures_dir, img) for img in os.listdir(pictures_dir) if img.endswith((".jpg", ".webp"))]
+
 
 root_bg = Image.open("pictures/Background.jpg")
 width, height = root_bg.size
