@@ -1,10 +1,10 @@
-import tkinter as tk
 from tkinter import *
-from PIL import Image, ImageTk
+import customtkinter
 from customtkinter import CTkImage
 from constants import *
 import random
-import customtkinter
+
+
 
 customtkinter.set_appearance_mode("dark")  
 customtkinter.set_default_color_theme("blue")  
