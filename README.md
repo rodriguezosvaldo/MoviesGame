@@ -4,5 +4,5 @@
 </p>
 
 <p align="center">
-A little fun game developed using python and tkinter.
+A fun game developed using python and tkinter.
 </p>
